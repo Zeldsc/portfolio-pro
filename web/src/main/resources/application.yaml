@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/portfoliopro
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+# EXECUTADO VIA DOCKER
+#flyway:
+#  enabled: true
+#  url: jdbc:postgresql://localhost:5432/portfoliopro
+#  user: flyway
+#  password: flywaypass
+#  baseline-on-migrate: true
+#  ignore-missing-migrations: true
+#  ignore-future-migrations: true
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    github.zeldsc: DEBUG
+    org.apache.jasper: DEBUG
+    org.springframework.web.servlet.view: DEBUG

@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14.10
+    container_name: portfoliopro-db
+    environment:
+      POSTGRES_USER: flyway
+      POSTGRES_PASSWORD: flywaypass
+      POSTGRES_DB: portfoliopro
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  flyway:
+    image: flyway/flyway:11
+    container_name: flyway-migrator
+    command: -url=jdbc:postgresql://db:5432/portfoliopro -user=flyway -password=flywaypass -locations=filesystem:/flyway/sql migrate
+    volumes:
+      - ./infra/src/main/resources/db/migration:/flyway/sql
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: portfoliopro-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/portfoliopro
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    networks:
+      - app-network
+    profiles: ["app"]
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge
